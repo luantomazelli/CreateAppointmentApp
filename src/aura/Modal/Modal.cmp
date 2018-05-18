@@ -1,0 +1,225 @@
+<aura:component controller="ModalController" implements="force:appHostable,flexipage:availableForAllPageTypes">
+		
+	<aura:attribute name="isOpen" type="boolean" default="false"/>
+	
+	<aura:dependency resource="c:CreateAppointment" />
+
+	<aura:attribute name="lead" type="sObject"/>
+	<aura:attribute name="events" type="sObject[]"/>
+
+	<aura:attribute name="startDateTime" type="DateTime"/>
+  	<aura:attribute name="startHour" type="String"/>
+  	<aura:attribute name="startMinute" type="String"/>
+  	<aura:attribute name="startAMPM" type="String"/>
+
+	<aura:attribute name="subjectPicklistValues" type="String[]"/>
+	<aura:attribute name="showAsPicklistValues" type="String[]"/>
+	<aura:attribute name="hoursList" type="String[]" default="['01','02','03','04','05','06','07','08','09','10','11','12']"/>
+	<aura:attribute name="minutesList" type="String[]" default="['00','30']"/>
+	<aura:attribute name="ampmList" type="String[]" default="['am','pm']"/>
+	<aura:attribute name="doubleBooking" type="boolean" default="false"/>
+
+	<aura:method name="displayModal" action="{!c.displayModal}" description="Displays modal"/>
+	
+	<div class="slds-m-top_medium">
+
+		<aura:if isTrue="{!v.isOpen}">
+				<div aura:id="details-container" class="toggle">
+					<div role="dialog" tabindex="-1" aura:id="details-modal" class="slds-modal">
+							<div class="slds-modal__container">
+
+									<!--Header-->
+									<div class="slds-modal__header" aura:id="details-header">
+										<a onclick="{!c.closeModal}">
+											<lightning:icon iconName="utility:close" size="small" alternativeText="Close" class="close-icon slds-float_right"/>
+										</a>
+										<h2 id="header43" class="slds-text-heading_medium">New Event</h2>
+									</div>
+									
+									<!--Main form inputs-->
+									<div aura:id="form" class="slds-modal__content slds-p-around_medium">
+										
+										<fieldset class="slds-form_compound">
+											<div class="slds-form-element__group">
+												<div class="slds-form-element__row">
+													<div class="slds-form-element slds-size_2-of-6">
+														<label class="slds-form-element__label" for="ownername">Owner Name:</label>
+													</div>
+													<div class="slds-form-element slds-size_4-of-6">
+														<ui:outputtext aura:id="ownername" 
+																	   class="slds-output"
+																	   value="{!v.lead.Owner.Name}"
+																	   />
+													</div>
+												</div>
+											</div>
+										</fieldset>
+										<fieldset class="slds-form_compound">
+											<div class="slds-form-element__group">
+												<div class="slds-form-element__row">
+													<div class="slds-form-element slds-size_2-of-6">
+														<label class="slds-form-element__label" for="startDate">Initial Appointment Date:</label>
+													</div>
+													<div class="slds-form-element slds-size_4-of-6">
+														<ui:outputDate aura:id="startDate" 
+																	   class="slds-output"
+																	   value="{!v.startDateTime}"
+																	   />
+													</div>
+												</div>
+											</div>
+										</fieldset>
+										<fieldset class="slds-form_compound">
+											<div class="slds-form-element__group">
+												<div class="slds-form-element__row">
+													<div class="slds-form-element slds-size_2-of-6">
+														<label class="slds-form-element__label" for="startDateTime">Initial Appointment Time:</label>
+													</div>
+													<div class="slds-form-element slds-size_1-of-6">
+														<ui:inputSelect aura:id="hoursPicklist" multiple="false" class="slds-select">
+															<aura:iteration items="{!v.hoursList}" var="hour">
+																	<ui:inputSelectOption text="{!hour}" label="{!hour}"/>
+															</aura:iteration>
+														</ui:inputSelect>
+													</div>
+													<div class="slds-form-element slds-size_1-of-6">
+														<ui:inputSelect aura:id="minutesPicklist" multiple="false" class="slds-select">
+															<aura:iteration items="{!v.minutesList}" var="minute">
+																<ui:inputSelectOption text="{!minute}" label="{!minute}"/>
+															</aura:iteration>
+														</ui:inputSelect>
+													</div>
+													<div class="slds-form-element slds-size_1-of-6">
+														<ui:inputSelect aura:id="ampmPicklist" multiple="false" class="slds-select">
+															<aura:iteration items="{!v.ampmList}" var="ampm">
+																	<ui:inputSelectOption text="{!ampm}" label="{!ampm}"/>
+															</aura:iteration>
+														</ui:inputSelect>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+										<fieldset class="slds-form_compound">
+											<div class="slds-form-element__group">
+												<div class="slds-form-element__row">
+													<div class="slds-form-element slds-size_2-of-6">
+														<label class="slds-form-element__label" for="email">Email:</label>
+													</div>
+													<div class="slds-form-element slds-size_4-of-6">
+														<ui:outputEmail aura:id="email" 
+																	   class="slds-output"
+																	   value="{!v.lead.Owner.Email}"
+																	   />
+													</div>
+												</div>
+											</div>
+										</fieldset>
+										<fieldset class="slds-form_compound">
+											<div class="slds-form-element__group">
+												<div class="slds-form-element__row">
+													<div class="slds-form-element slds-size_2-of-6">
+														<label class="slds-form-element__label" for="phone">Phone:</label>
+													</div>
+													<div class="slds-form-element slds-size_4-of-6">
+														<ui:outputPhone aura:id="phone" 
+																		class="slds-output"
+																		value="{!v.lead.Owner.Phone}"
+																		/>
+													</div>
+												</div>
+											</div> 
+										</fieldset>
+										<fieldset class="slds-form_compound">
+											<div class="slds-form-element__group">
+												<div class="slds-form-element__row">
+													<div class="slds-form-element slds-size_2-of-6">
+														<label class="slds-form-element__label" for="subject">Subject:</label>
+													</div>
+													<div class="slds-form-element slds-size_4-of-6">
+														<ui:inputSelect aura:id="subject" multiple="false" class="slds-select">
+															<aura:iteration items="{!v.subjectPicklistValues}" var="subject">
+																<ui:inputSelectOption text="{!subject}" label="{!subject}"/>
+															</aura:iteration>
+														</ui:inputSelect>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+										<fieldset class="slds-form_compound">
+											<div class="slds-form-element__group">
+												<div class="slds-form-element__row">
+													<div class="slds-form-element slds-size_2-of-6">
+														<label class="slds-form-element__label" for="showAs">Show Time As:</label>
+													</div>
+													<div class="slds-form-element slds-size_4-of-6">
+														<ui:inputSelect aura:id="showAs" multiple="false" class="slds-select">
+															<aura:iteration items="{!v.showAsPicklistValues}" var="showAs">
+																<ui:inputSelectOption text="{!showAs}" label="{!showAs}"/>
+															</aura:iteration>
+														</ui:inputSelect>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+										<fieldset class="slds-form_compound">
+											<div class="slds-form-element__group">
+												<div class="slds-form-element__row">
+													<div class="slds-form-element slds-size_2-of-6">
+														<label class="slds-form-element__label" for="location">Location:</label>
+													</div>
+													<div class="slds-form-element slds-size_4-of-6">
+														<ui:outputtext aura:id="location-street" 
+																	   class="slds-output"
+																	   value="{!v.lead.Address.street}"
+																	   />
+														<ui:outputtext aura:id="location-city" 
+																	   class="slds-output"
+																	   value="{!v.lead.Address.city}"
+																	   />
+														<ui:outputtext aura:id="location-state" 
+																	   class="slds-output"
+																	   value="{!v.lead.Address.state}"
+																	   />
+														<ui:outputtext aura:id="location-postalCode" 
+																	   class="slds-output"
+																	   value="{!v.lead.Address.postalCode}"
+																	   />
+													</div>
+												</div>
+											</div>
+										</fieldset>
+									</div>
+
+									<!--Confirmation form double booking-->
+									<div aura:id="confirmation" class="slds-modal__content slds-p-around_medium slds-hide">
+										<div aura:id="question">
+											<br/>
+											<div class="slds-align_absolute-center slds-text-color_error">
+												<ui:outputText value="There is an event already scheduled for the time selected. Are you sure you want to create this event?" />
+											</div>
+											<br/>
+											<br/>
+											<br/>
+											<div class="slds-align--absolute-center" aura:id="button-close">
+												<button aura:id="button-cancel" class="slds-button slds-button_neutral slds-order_3 slds-container_right slds-container_small" onclick="{!c.closeModal}">Cancel</button>
+											</div>
+										</div>
+									</div>
+
+									<!--Modal save button-->
+									<div class="slds-modal__footer">
+											<div class="slds-grid slds-grid_vertical-align-center" aura:id="button-save">
+												<button aura:id="button-save" class="slds-button slds-button_neutral slds-order_3 slds-container_right slds-container_small" onclick="{!c.saveEvent}">Save</button>
+											</div>
+									</div>
+
+							</div>
+					</div>
+
+				<div aura:id="details-backdrop" class="slds-backdrop"></div>
+
+				</div>
+		</aura:if>
+
+	</div>
+</aura:component>

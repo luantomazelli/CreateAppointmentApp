@@ -1,0 +1,220 @@
+<aura:component controller="CreateAppointmentController" implements="force:appHostable,flexipage:availableForAllPageTypes,force:hasRecordId" access="global" >
+
+	<ltng:require styles="{!$Resource.FullCalendar + '/fullcalendar.css'}"
+		scripts="{!join(',',
+					$Resource.FullCalendar + '/lib/jquery.min.js',
+					$Resource.FullCalendar + '/lib/moment.min.js',
+					$Resource.FullCalendar + '/lib/jquery-ui.min.js',
+					$Resource.FullCalendar + '/fullcalendar.js',
+					$Resource.FullCalendarScheduler + '/scheduler.js'
+					)}"
+		afterScriptsLoaded="{!c.afterScriptsLoaded}" />
+	<ltng:require styles="/resource/FullCalendarScheduler/scheduler.css"/>
+	<ltng:require styles="/resource/FullCalendar/fullcalendar.css"/>
+
+	<aura:attribute name="recordId" type="String"/>
+	<aura:attribute name="events" type="sObject[]" />
+	<aura:attribute name="lead" type="sObject"/>
+	<aura:attribute name="currentEvent" type="sObject"/>
+	
+	<aura:attribute name="license" type="String" default="GPL-My-Project-Is-Open-Source"/>
+	<aura:attribute name="subjectPicklistValues" type="String[]"/>
+	<aura:attribute name="showAsPicklistValues" type="String[]"/>
+
+	<aura:attribute name="modal" type="Aura.Component" />
+
+
+	<!--Header-->
+	<div class="slds-container--center slds-container--x-large">
+		<div class="slds-media__body">
+			<br/>
+			<p class="slds-page-header__title slds-truncate slds-align-middle" title="Create New Appointment">Create New Appointment</p>
+			<br/>
+		</div>
+	</div>
+
+
+	<!--Customer Information markup-->
+	<div class="slds-container--center slds-container--x-large">
+	<div class="slds-page-header" role="banner" id="wrapper">
+		<div class="slds-media__body">
+			<p class="slds-page-header__title slds-truncate slds-align-middle" title="Customer Information">Customer Information</p>
+			<br/>
+		</div>
+		<div class="slds-form--inline">
+
+			<div class="slds-grid slds-wrap slds-grid--pull-padded">
+			  	<div class="slds-col--padded slds-size--1-of-1">
+			  		<fieldset class="slds-form--compound">
+					<div class="form-element__group">
+						<div class="slds-form-element__row">
+							<div class="slds-form-element slds-size--1-of-10">
+								<label class="slds-form-element__label">Name: </label>
+							</div>
+							<div class="slds-form-element slds-size--9-of-10">
+								<ui:outputtext aura:id="name" 
+												class="slds-output"
+												value="{!v.lead.Name}"
+								/>
+							</div>
+						</div>
+					</div>
+				</fieldset>
+			  	</div>
+
+			  	<div class="slds-col--padded slds-size--1-of-1">
+					<fieldset class="slds-form--compound">
+						<div class="form-element__group">
+							<div class="slds-form-element__row">
+									<div class="slds-form-element slds-size--2-of-10">
+										<label class="slds-form-element__label">Street Address: </label>
+									</div>
+										<div class="slds-form-element slds-size--8-of-10">
+										<ui:outputtext aura:id="location-street"
+													class="slds-output"
+													value="{!v.lead.Address.street}"
+										/>
+									</div>
+							</div>
+						</div>
+					</fieldset>
+			  	</div>
+
+			  	<div class="slds-col--padded slds-size--1-of-1 slds-large-size--1-of-2">
+			    	<div class="slds-grid slds-wrap slds-grid--pull-padded">
+				      	<div class="slds-col--padded slds-size--1-of-2 slds-medium-size--1-of-1 slds-large-size--1-of-3">
+				      		<fieldset class="slds-form--compound">
+				      			<div class="slds-form-element__row">
+									<div class="slds-form-element slds-size--1-of-10">
+										<label class="slds-form-element__label">City: </label>
+									</div>
+									<div class="slds-form-element slds-size--3-of-10">
+										<ui:outputtext aura:id="location-city"
+														class="slds-output"
+														value="{!v.lead.Address.city}"
+										/>
+									</div>
+								</div>
+							</fieldset>
+				      	</div>
+				      	<div class="slds-col--padded slds-size--1-of-2 slds-medium-size--1-of-1 slds-large-size--1-of-3">
+				      		<fieldset class="slds-form--compound">
+				      			<div class="slds-form-element__row">
+									<div class="slds-form-element slds-size--1-of-10">
+										<label class="slds-form-element__label">State: </label>
+									</div>
+									<div class="slds-form-element slds-size--3-of-10">
+										<ui:outputtext aura:id="location-state"
+														class="slds-output"
+														value="{!v.lead.Address.state}"
+										/>
+									</div>
+								</div>
+							</fieldset>
+				      	</div>
+				      	<div class="slds-col--padded slds-size--1-of-2 slds-medium-size--1-of-1 slds-large-size--1-of-3">
+				      		<fieldset class="slds-form--compound">
+				      			<div class="slds-form-element__row">
+									<div class="slds-form-element slds-size--1-of-10">
+										<label class="slds-form-element__label">Zip Code: </label>
+									</div>
+									<div class="slds-form-element slds-size--3-of-10">
+										<ui:outputtext aura:id="location-postalCode"
+														class="slds-output"
+														value="{!v.lead.Address.postalCode}"
+										/>
+									</div>
+								</div>
+							</fieldset>
+				      	</div>
+			    	</div>
+			  	</div>
+			</div>
+		</div>
+	</div>
+	</div>
+
+	<!--Lead Owner markup-->
+	<div class="slds-container--center slds-container--x-large">
+		<div class="slds-page-header" role="banner" id="wrapper">
+			<div class="slds-media__body">
+				<p class="slds-page-header__title slds-truncate slds-align-middle" title="Customer Information">Lead Owner</p>
+				<br/>
+			</div>
+			<div class="slds-form--inline">
+
+				<div class="slds-grid slds-wrap slds-grid--pull-padded">
+				  	<div class="slds-col--padded slds-size--1-of-1">
+				  		<fieldset class="slds-form--compound">
+						<div class="form-element__group">
+							<div class="slds-form-element__row">
+								<div class="slds-form-element slds-size--1-of-10">
+									<label class="slds-form-element__label">Name: </label>
+								</div>
+								<div class="slds-form-element slds-size--9-of-10">
+									<ui:outputtext aura:id="owner-name" 
+													class="slds-output"
+													value="{!v.lead.Owner.Name}"
+									/>
+								</div>
+							</div>
+						</div>
+					</fieldset>
+				  	</div>
+
+				  	<div class="slds-col--padded slds-size--1-of-1 slds-large-size--1-of-2">
+				    	<div class="slds-grid slds-wrap slds-grid--pull-padded">
+					      	<div class="slds-col--padded slds-size--1-of-1">
+					      		<fieldset class="slds-form--compound">
+					      			<div class="slds-form-element__row">
+										<div class="slds-form-element slds-size--1-of-10">
+											<label class="slds-form-element__label">Phone: </label>
+										</div>
+										<div class="slds-form-element slds-size--3-of-10">
+											<ui:outputtext aura:id="owner-phone"
+															class="slds-output"
+															value="{!v.lead.Owner.Phone}"
+											/>
+										</div>
+									</div>
+								</fieldset>
+					      	</div>
+					    </div>
+					</div>
+					<div class="slds-col--padded slds-size--1-of-1 slds-large-size--1-of-2">
+				    	<div class="slds-grid slds-wrap slds-grid--pull-padded">
+					      	<div class="slds-col--padded slds-size--1-of-1">
+					      		<fieldset class="slds-form--compound">
+					      			<div class="slds-form-element__row">
+										<div class="slds-form-element slds-size--1-of-10">
+											<label class="slds-form-element__label">Email: </label>
+										</div>
+										<div class="slds-form-element slds-size--3-of-10">
+											<ui:outputtext aura:id="owner-email"
+															class="slds-output"
+															value="{!v.lead.Owner.Email}"
+											/>
+										</div>
+									</div>
+								</fieldset>
+					      	</div>
+				    	</div>
+				  	</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!--CALENDAR-->	
+	<div class="slds-container--center slds-container--x-large">
+		<div class="slds-page-header" role="banner" id="wrapper">
+			<div id="calendar" aura:id="calendar"></div>
+		</div>
+	</div>
+
+	<!-- The modal markup - REQUIRED -->
+	<div class="slds">
+		{!v.modal}
+	</div>
+
+</aura:component>

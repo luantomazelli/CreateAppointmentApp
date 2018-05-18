@@ -1,0 +1,13 @@
+<apex:page standardController="Lead" showheader="false" sidebar="false" lightningStyleSheets="true">
+    <apex:includeLightning />
+
+    <div id="CreateAppointment" />
+
+    <script type="text/javascript">
+      	var recordId = "{!$CurrentPage.parameters.recordId}"; // fetch the records Id 
+
+      	$Lightning.use("c:CreateAppointmentApp", function() {
+			$Lightning.createComponent("c:CreateAppointment", { "recordId" : recordId }, "CreateAppointment");
+      	});
+    </script>
+</apex:page>

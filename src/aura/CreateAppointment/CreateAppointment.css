@@ -1,0 +1,17 @@
+.THIS .clickable {
+	cursor:pointer;
+}
+
+.THIS .eventInfoDialog {
+	text-align:left;
+}
+
+.THIS .eventInfoList {
+	list-style-type: none;
+}
+.THIS #wrapper {
+    border:solid 1px;
+}
+.THIS #calendar {
+	height:auto;
+}
