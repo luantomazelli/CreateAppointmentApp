@@ -10,7 +10,7 @@ List of components created in the Developer org for the solution:
   * custom button added to all page layouts
 * Static resources:
   * FullCalendar
-  * FullCalendarResourcer
+  * FullCalendarScheduler
 * Visualforce page:
   * CreateAppointment
 * Lightning components:
